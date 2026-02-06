@@ -9,7 +9,22 @@
   <link rel="apple-touch-icon" href="./Pistols.png">
   <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
+  <!-- Disclaimer Modal -->
+  <div id="disclaimerModal" class="modal" aria-hidden="true">
+    <div class="modal__overlay" data-close="true"></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-label="Disclaimer">
+      <button class="modal__close btn btn--ghost" type="button" data-close="true" aria-label="Close">✕</button>
+      <div class="modal__body">
+        <img class="modal__img" src="./disclaimer.png" alt="Disclaimer" />
+        <p class="modal__text">
+          Prices are for small orders. If someone buys in bulk, prices can be revisited.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <header class="header">
     <div class="wrap header__inner">
       <div>
@@ -31,8 +46,14 @@
         <div class="hero__left">
           <h2>Inventory overview</h2>
           <p class="muted">
-            The inventory is updated live. No need to ask if it's "available" if you see here it means it's available.
+            The inventory is updated live. No need to ask if it's "available" — if you see it here, it means it's available.
           </p>
+
+          <!-- Clickable disclaimer -->
+          <button id="openDisclaimer" class="disclaimerBtn" type="button" aria-label="Open disclaimer">
+            <img src="./disclaimer.png" alt="Disclaimer" />
+          </button>
+
           <div class="hero__chips" id="quickStats"></div>
         </div>
 
@@ -44,6 +65,10 @@
           <div class="kpi">
             <div class="kpi__label">Categories</div>
             <div class="kpi__value" id="kpiCategories">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__label">Total Value</div>
+            <div class="kpi__value" id="kpiTotalValue">—</div>
           </div>
         </div>
       </div>
@@ -62,6 +87,7 @@
       <select id="sortBy" class="select">
         <option value="NAME_ASC">Sort: Name (A→Z)</option>
         <option value="QTY_DESC">Sort: Quantity (High→Low)</option>
+        <option value="VALUE_DESC">Sort: Value (High→Low)</option>
       </select>
     </section>
 
@@ -69,7 +95,7 @@
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <span>by someone from valhala• <span id="year"></span></span>
+        <span>by someone from valhala • <span id="year"></span></span>
         <span class="muted">DO NOT SHARE WITH THE PUBLIC OR UNTRUSTED INDIVIDUALS.</span>
       </div>
     </footer>
