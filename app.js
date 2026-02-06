@@ -7,13 +7,14 @@
 // /images/drugs.png
 
 const CATEGORY_THEME = {
-  "Pistols":  { accent: "#ef4444", image: "./images/pistols.png" },
-  "SMGs":     { accent: "#f59e0b", image: "./images/smgs.png" },
-  "Rifles":   { accent: "#22c55e", image: "./images/rifles.png" },
-  "Shotguns": { accent: "#f43f5e", image: "./images/shotguns.png" },
-  "Melee":    { accent: "#a855f7", image: "./images/melee.png" },
-  "Drugs":    { accent: "#38bdf8", image: "./images/drugs.png" },
-  "Other":    { accent: "#94a3b8", image: "./images/melee.png" }
+  "Pistols":  { accent: "#ef4444", image: "./Pistols.png" },
+  "SMGs":     { accent: "#f59e0b", image: "./SMGs.png" },
+  "Rifles":   { accent: "#22c55e", image: "./Rifles.png" },
+  "Shotguns": { accent: "#f43f5e", image: "./Shotguns.png" },
+  "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
+  "Drugs":    { accent: "#38bdf8", image: "./Drugs.png" },
+  "Devices":  { accent: "#60a5fa", image: "./Devices.png" },
+  "Other":    { accent: "#94a3b8", image: "./Devices.png" }
 };
 
 const INVENTORY = [
