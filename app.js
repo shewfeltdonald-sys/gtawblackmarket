@@ -1,49 +1,95 @@
-// ====== EDIT THIS SECTION LATER (your inventory list) ======
-// quantity: how many you have
-// value: optional (set to null or 0 if you don't track money/value)
-// note: optional (serial, quality, location, etc.)
+// Put your PNGs here in your repo:
+// /images/pistols.png
+// /images/smgs.png
+// /images/rifles.png
+// /images/shotguns.png
+// /images/melee.png
+// /images/drugs.png
 
-const INVENTORY = [
-  // Guns
-  { category: "Guns", name: "Pistol", quantity: 2, value: null, note: "RP" },
-  { category: "Guns", name: "SMG", quantity: 1, value: null, note: "" },
-
-  // Devices (you wrote devines — I assumed you meant devices)
-  { category: "Devices", name: "Radio", quantity: 1, value: null, note: "" },
-  { category: "Devices", name: "Lockpick", quantity: 6, value: null, note: "" },
-
-  // Drugs
-  { category: "Drugs", name: "Weed (g)", quantity: 120, value: null, note: "" },
-  { category: "Drugs", name: "Coke (bags)", quantity: 8, value: null, note: "" },
-
-  // Other
-  { category: "Ammo", name: "9mm", quantity: 250, value: null, note: "" },
-  { category: "Medical", name: "Medkit", quantity: 3, value: null, note: "" },
-];
-
-// Category styles (nice accents per category)
 const CATEGORY_THEME = {
-  "Guns":    { accent: "#fb7185", icon: "🔫" },
-  "Devices": { accent: "#22d3ee", icon: "🧰" },
-  "Drugs":   { accent: "#a78bfa", icon: "🧪" },
-  "Ammo":    { accent: "#fbbf24", icon: "🎯" },
-  "Medical": { accent: "#34d399", icon: "🩹" },
-  "Other":   { accent: "#60a5fa", icon: "📦" },
+  "Pistols":  { accent: "#ef4444", image: "./images/pistols.png" },
+  "SMGs":     { accent: "#f59e0b", image: "./images/smgs.png" },
+  "Rifles":   { accent: "#22c55e", image: "./images/rifles.png" },
+  "Shotguns": { accent: "#f43f5e", image: "./images/shotguns.png" },
+  "Melee":    { accent: "#a855f7", image: "./images/melee.png" },
+  "Drugs":    { accent: "#38bdf8", image: "./images/drugs.png" },
+  "Other":    { accent: "#94a3b8", image: "./images/melee.png" }
 };
 
-function money(n){
-  if (n === null || n === undefined) return "—";
-  const x = Number(n);
-  if (!Number.isFinite(x)) return "—";
-  return x.toLocaleString(undefined, { maximumFractionDigits: 0 });
-}
+const INVENTORY = [
+  // Pistols / Handguns
+  { category: "Pistols", name: "HeavyPistol", quantity: 9 },
+  { category: "Pistols", name: "CombatPistol", quantity: 10 },
+  { category: "Pistols", name: "SNSPistol", quantity: 3 },
+  { category: "Pistols", name: "SNSPistolMk2", quantity: 8 },
+  { category: "Pistols", name: "Pistol", quantity: 10 },
+  { category: "Pistols", name: "PistolMk2", quantity: 11 },
+  { category: "Pistols", name: "Pistol50", quantity: 4 },
+  { category: "Pistols", name: "VintagePistol", quantity: 7 },
+  { category: "Pistols", name: "CeramicPistol", quantity: 1 },
+  { category: "Pistols", name: "Revolver", quantity: 2 },
+  { category: "Pistols", name: "Model15", quantity: 8 },
+  { category: "Pistols", name: "Snub15", quantity: 10 },
+  { category: "Pistols", name: "Glock", quantity: 13 },
+  { category: "Pistols", name: "Sig", quantity: 10 },
+  { category: "Pistols", name: "Taurus", quantity: 1 },
+  { category: "Pistols", name: "Makarov", quantity: 1 },
+  { category: "Pistols", name: "PistolXM3", quantity: 3 },
+
+  // SMGs / Machine Pistols
+  { category: "SMGs", name: "SMG", quantity: 3 },
+  { category: "SMGs", name: "SMGMk2", quantity: 6 },
+  { category: "SMGs", name: "MicroSMG", quantity: 6 },
+  { category: "SMGs", name: "MiniSMG", quantity: 12 },
+  { category: "SMGs", name: "MP9", quantity: 9 },
+  { category: "SMGs", name: "MAC10", quantity: 2 },
+  { category: "SMGs", name: "MachinePistol", quantity: 1 },
+
+  // Rifles
+  { category: "Rifles", name: "CarbineRifleMk2", quantity: 15 },
+  { category: "Rifles", name: "AssaultRifle", quantity: 4 },
+  { category: "Rifles", name: "TacticalRifle", quantity: 2 },
+  { category: "Rifles", name: "CompactRifle", quantity: 4 },
+  { category: "Rifles", name: "SpecialCarbine", quantity: 1 },
+  { category: "Rifles", name: "StampedRifle", quantity: 1 },
+  { category: "Rifles", name: "HuntingRifle", quantity: 2 },
+
+  // Shotguns
+  { category: "Shotguns", name: "PumpShotgun", quantity: 5 },
+  { category: "Shotguns", name: "SawnOffShotgun", quantity: 5 },
+  { category: "Shotguns", name: "DbShotgun", quantity: 1 },
+  { category: "Shotguns", name: "Remington", quantity: 1 },
+
+  // Melee Weapons
+  { category: "Melee", name: "Knife", quantity: 9 },
+  { category: "Melee", name: "SwitchBlade", quantity: 22 },
+  { category: "Melee", name: "Dagger", quantity: 3 },
+  { category: "Melee", name: "Machete", quantity: 4 },
+  { category: "Melee", name: "Hatchet", quantity: 2 },
+  { category: "Melee", name: "Bat", quantity: 1 },
+  { category: "Melee", name: "BattleAxe", quantity: 2 },
+  { category: "Melee", name: "KnuckleDuster", quantity: 8 },
+  { category: "Melee", name: "Flashlight", quantity: 3 },
+
+  // Drugs
+  { category: "Drugs", name: "Marijuana / Weed", quantity: 3800 },
+  { category: "Drugs", name: "Cocaine", quantity: 4600 },
+  { category: "Drugs", name: "Fentanyl", quantity: 1100 },
+  { category: "Drugs", name: "PCP", quantity: 1100 },
+  { category: "Drugs", name: "Methamphetamine", quantity: 460 },
+  { category: "Drugs", name: "Heroin", quantity: 250 },
+  { category: "Drugs", name: "LSD", quantity: 146 },
+  { category: "Drugs", name: "Bath Salts", quantity: 28 },
+  { category: "Drugs", name: "Oxycodone", quantity: 250 },
+  { category: "Drugs", name: "Morphine", quantity: 250 },
+];
 
 function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
 
 function groupByCategory(items){
   const map = new Map();
   for (const it of items){
-    const cat = it.category?.trim() || "Other";
+    const cat = (it.category || "Other").trim() || "Other";
     if (!map.has(cat)) map.set(cat, []);
     map.get(cat).push({ ...it, category: cat });
   }
@@ -52,17 +98,8 @@ function groupByCategory(items){
 
 function computeStats(items){
   const totalItems = sum(items.map(i => Number(i.quantity) || 0));
-  const categories = new Set(items.map(i => i.category?.trim() || "Other")).size;
-
-  // Optional value totals (only counts if value is numeric)
-  const totalValue = sum(items.map(i => {
-    const qty = Number(i.quantity) || 0;
-    const val = Number(i.value);
-    if (!Number.isFinite(val) || val <= 0) return 0;
-    return qty * val;
-  }));
-
-  return { totalItems, categories, totalValue };
+  const categories = new Set(items.map(i => (i.category || "Other").trim() || "Other")).size;
+  return { totalItems, categories };
 }
 
 function applyThemeToggle(){
@@ -70,6 +107,7 @@ function applyThemeToggle(){
   const root = document.documentElement;
   const saved = localStorage.getItem(key);
   if (saved) root.setAttribute("data-theme", saved);
+  if (!root.getAttribute("data-theme")) root.setAttribute("data-theme", "dark");
 
   document.getElementById("themeToggle").addEventListener("click", () => {
     const cur = root.getAttribute("data-theme");
@@ -77,8 +115,6 @@ function applyThemeToggle(){
     root.setAttribute("data-theme", next);
     localStorage.setItem(key, next);
   });
-
-  if (!root.getAttribute("data-theme")) root.setAttribute("data-theme", "dark");
 }
 
 function fillFilters(categories){
@@ -101,17 +137,9 @@ function render(items){
 
   for (const cat of cats){
     const theme = CATEGORY_THEME[cat] || CATEGORY_THEME["Other"];
-    const icon = theme.icon || "📦";
-
     const catItems = grouped.get(cat);
 
     const catQty = sum(catItems.map(i => Number(i.quantity) || 0));
-    const catValue = sum(catItems.map(i => {
-      const qty = Number(i.quantity) || 0;
-      const val = Number(i.value);
-      if (!Number.isFinite(val) || val <= 0) return 0;
-      return qty * val;
-    }));
 
     const card = document.createElement("article");
     card.className = "cat";
@@ -121,11 +149,13 @@ function render(items){
       <div class="cat__bar"></div>
       <div class="cat__head">
         <div>
-          <h3 class="cat__title"><span class="badge">${icon}</span> ${cat}</h3>
+          <h3 class="cat__title">
+            <img class="cat__icon" src="${theme.image}" alt="${cat}" />
+            ${cat}
+          </h3>
         </div>
         <div class="cat__meta">
-          <div><b>${catQty}</b> total</div>
-          <div class="muted">value: <b>${catValue ? money(catValue) : "—"}</b></div>
+          <div><b>${catQty.toLocaleString()}</b> total</div>
         </div>
       </div>
       <div class="cat__list"></div>
@@ -133,7 +163,6 @@ function render(items){
 
     const list = card.querySelector(".cat__list");
 
-    // Sort inside category by qty desc then name
     const sorted = [...catItems].sort((a,b) => {
       const qa = Number(a.quantity)||0, qb = Number(b.quantity)||0;
       if (qb !== qa) return qb - qa;
@@ -142,19 +171,15 @@ function render(items){
 
     for (const it of sorted){
       const qty = Number(it.quantity) || 0;
-      const val = Number(it.value);
-      const hasVal = Number.isFinite(val) && val > 0;
 
       const row = document.createElement("div");
       row.className = "item";
       row.innerHTML = `
         <div class="item__left">
           <div class="item__name">${it.name}</div>
-          ${it.note ? `<div class="item__note">${it.note}</div>` : `<div class="item__note muted"> </div>`}
         </div>
         <div class="item__right">
-          <div><span class="badge">x ${qty}</span></div>
-          <div class="item__note">${hasVal ? `value: ${money(qty * val)}` : ""}</div>
+          <span class="badge">x ${qty.toLocaleString()}</span>
         </div>
       `;
       list.appendChild(row);
@@ -164,26 +189,23 @@ function render(items){
   }
 }
 
-function hydrateKpis(items){
-  const stats = computeStats(items);
+function hydrateKpis(allItems){
+  const stats = computeStats(allItems);
   document.getElementById("kpiTotalItems").textContent = stats.totalItems.toLocaleString();
   document.getElementById("kpiCategories").textContent = stats.categories.toLocaleString();
-  document.getElementById("kpiTotalValue").textContent = stats.totalValue ? money(stats.totalValue) : "—";
 
   const chips = document.getElementById("quickStats");
   chips.innerHTML = "";
 
-  // 3 quick chips
-  const topCats = Array.from(groupByCategory(items).entries())
+  const topCats = Array.from(groupByCategory(allItems).entries())
     .map(([cat, list]) => ({ cat, qty: sum(list.map(i => Number(i.quantity)||0)) }))
     .sort((a,b)=> b.qty - a.qty)
-    .slice(0, 3);
+    .slice(0, 4);
 
   for (const t of topCats){
-    const theme = CATEGORY_THEME[t.cat] || CATEGORY_THEME["Other"];
     const div = document.createElement("div");
     div.className = "chip";
-    div.innerHTML = `<span class="badge" style="border-color: var(--border);">${theme.icon}</span> ${t.cat}: <b>${t.qty.toLocaleString()}</b>`;
+    div.innerHTML = `${t.cat}: <b>${t.qty.toLocaleString()}</b>`;
     chips.appendChild(div);
   }
 }
@@ -204,7 +226,6 @@ function getFilteredItems(){
   if (q){
     items = items.filter(i =>
       i.name.toLowerCase().includes(q) ||
-      (i.note || "").toLowerCase().includes(q) ||
       i.category.toLowerCase().includes(q)
     );
   }
@@ -213,12 +234,6 @@ function getFilteredItems(){
     items.sort((a,b)=>a.name.localeCompare(b.name));
   } else if (sort === "QTY_DESC"){
     items.sort((a,b)=>(Number(b.quantity)||0) - (Number(a.quantity)||0));
-  } else if (sort === "VALUE_DESC"){
-    items.sort((a,b)=>{
-      const av = (Number(a.quantity)||0) * (Number(a.value)||0);
-      const bv = (Number(b.quantity)||0) * (Number(b.value)||0);
-      return bv - av;
-    });
   }
 
   return items;
@@ -229,10 +244,7 @@ function bindUI(){
   fillFilters(cats);
 
   const rerender = () => {
-    const items = getFilteredItems();
-    render(items);
-
-    // KPIs should reflect full inventory (not filtered), feels nicer:
+    render(getFilteredItems());
     hydrateKpis(INVENTORY);
   };
 
