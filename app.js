@@ -12,7 +12,7 @@ const CATEGORY_THEME = {
   "Rifles":   { accent: "#22c55e", image: "./Rifles.png" },
   "Shotguns": { accent: "#f43f5e", image: "./Shotguns.png" },
   "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
-  "Drugs":    { accent: "#38bdf8", image: "./Drugs.png" },
+  "Drugs":    { accent: "#38bdf8", image: "./drugs.png" },
   "Devices":  { accent: "#60a5fa", image: "./Devices.png" },
   "Other":    { accent: "#94a3b8", image: "./Devices.png" }
 };
