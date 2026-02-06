@@ -8,11 +8,27 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+
+  <!-- Password Gate -->
+  <div id="gate" class="gate" aria-hidden="true">
+    <div class="gate__card">
+      <h1 class="gate__title">gtawisass</h1>
+      <p class="gate__sub">Enter password to access</p>
+
+      <form id="gateForm" class="gate__form" autocomplete="off">
+        <input id="gateInput" class="gate__input" type="password" placeholder="Password" />
+        <button class="btn" type="submit">Unlock</button>
+      </form>
+
+      <p id="gateError" class="gate__error" hidden>Wrong password.</p>
+    </div>
+  </div>
+
   <header class="header">
     <div class="wrap header__inner">
       <div>
-        <h1 class="brand">GTAW Black Market</h1>
-        <p class="subtitle">Live Inventory Dashboard</p>
+        <h1 class="brand">gtawisass</h1>
+        <p class="subtitle">GTA World RP Inventory Dashboard</p>
       </div>
 
       <div class="header__actions">
@@ -29,7 +45,7 @@
         <div class="hero__left">
           <h2>Inventory overview</h2>
           <p class="muted">
-            The website updates are live, and in-game items now reflect these changes. You may contact your provider or seller to double-check, but everything should be accurate.
+            Categories are grouped automatically and totals are calculated from your list.
           </p>
           <div class="hero__chips" id="quickStats"></div>
         </div>
@@ -67,8 +83,8 @@
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <span>GTA World RP • <span id="year"></span></span>
-        <span class="muted">DO NOT SHARE WITH THE PUBLIC.</span>
+        <span>Made for GTA World RP • <span id="year"></span></span>
+        <span class="muted">Edit <code>app.js</code> to update inventory.</span>
       </div>
     </footer>
   </main>
