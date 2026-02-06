@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>gtawisass — Inventory</title>
+  <meta name="description" content="GTA World RP inventory dashboard." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="wrap header__inner">
+      <div>
+        <h1 class="brand">gtawisass</h1>
+        <p class="subtitle">GTA World RP Inventory Dashboard</p>
+      </div>
+
+      <div class="header__actions">
+        <button id="themeToggle" class="btn btn--ghost" type="button" aria-label="Toggle theme">
+          🌗 Theme
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero__card">
+        <div class="hero__left">
+          <h2>Your stash, organized</h2>
+          <p>
+            Add items once, and the site calculates totals by category automatically.
+            When you send me your inventory list, I’ll format it so you can paste it in.
+          </p>
+          <div class="hero__chips" id="quickStats"></div>
+        </div>
+
+        <div class="hero__right">
+          <div class="kpi">
+            <div class="kpi__label">Total Items</div>
+            <div class="kpi__value" id="kpiTotalItems">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__label">Categories</div>
+            <div class="kpi__value" id="kpiCategories">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__label">Total Value</div>
+            <div class="kpi__value" id="kpiTotalValue">—</div>
+            <div class="kpi__hint">(optional — only if you add prices)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="search">
+        <span class="search__icon">🔎</span>
+        <input id="searchInput" class="search__input" placeholder="Search items… (e.g., pistol, medkit, weed)" />
+      </div>
+
+      <select id="categoryFilter" class="select">
+        <option value="ALL">All categories</option>
+      </select>
+
+      <select id="sortBy" class="select">
+        <option value="NAME_ASC">Sort: Name (A→Z)</option>
+        <option value="QTY_DESC">Sort: Quantity (High→Low)</option>
+        <option value="VALUE_DESC">Sort: Value (High→Low)</option>
+      </select>
+    </section>
+
+    <section id="categoryGrid" class="grid"></section>
+
+    <footer class="footer">
+      <div class="wrap footer__inner">
+        <span>Made for GTA World RP • <span id="year"></span></span>
+        <span class="muted">Tip: edit <code>app.js</code> to update your inventory.</span>
+      </div>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
