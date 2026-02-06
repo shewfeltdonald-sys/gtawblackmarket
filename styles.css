@@ -74,11 +74,11 @@ body{
 .hero__card p{ margin:0; color: var(--muted); max-width: 62ch; }
 
 .disclaimerBtn{
-  margin-top: 10px;
+margin-top: 10px;
   border: 1px solid var(--border);
   background: var(--card);
-  border-radius: 14px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 6px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -87,7 +87,7 @@ body{
 }
 .disclaimerBtn:hover{ transform: translateY(-1px); background: var(--card2); }
 .disclaimerBtn img{
-  width: 120px;
+  width: 48px;
   height: auto;
   display: block;
 }
