@@ -1,23 +1,25 @@
-// Category images (yours are in repo root)
+// Category images (in repo root — filenames must match EXACTLY)
 const CATEGORY_THEME = {
   "Pistols":  { accent: "#ef4444", image: "./Pistols.png" },
   "SMGs":     { accent: "#f59e0b", image: "./SMGs.png" },
   "Rifles":   { accent: "#22c55e", image: "./Rifles.png" },
   "Shotguns": { accent: "#f43f5e", image: "./Shotguns.png" },
   "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
-  "Drugs":    { accent: "#38bdf8", image: "./drugs.png" },
+  "Drugs":    { accent: "#38bdf8", image: "./Drugs.png" },
   "Devices":  { accent: "#60a5fa", image: "./Devices.png" },
   "Other":    { accent: "#94a3b8", image: "./Devices.png" }
 };
 
-// Pricing icon (you added this)
+// Pricing icon (in repo root)
 const MONEY_ICON = "./dollar.png";
 
 // Weapon category description
 const WEAPON_DESC =
   "All weapons come with a minimum of 150 extra ammo included in the package. If 5+ weapons bought, it'll be 250 ammo. If 10+ 400 ammo etc.";
 
-// Inventory
+// ===============================
+// INVENTORY
+// ===============================
 const INVENTORY = [
   // Pistols / Handguns
   { category: "Pistols", name: "HeavyPistol", quantity: 9 },
@@ -86,54 +88,10 @@ const INVENTORY = [
   { category: "Drugs", name: "Morphine", quantity: 250 },
 ];
 
+// ===============================
+// HELPERS
+// ===============================
 function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
-
-function money(n){
-  const x = Number(n);
-  if (!Number.isFinite(x)) return "—";
-  return x.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-}
-
-// Unit price rules
-function unitPriceFor(item){
-  const cat = (item.category || "").trim();
-  const name = (item.name || "").trim();
-
-  // DRUGS:
-  // Cocaine price is 10usd x 500  => $10 per 500 => $0.02 each
-  // Weed x500 = 8/usd           => $8 per 500  => $0.016 each
-  // Fentanyl x300 = 8/usd       => $8 per 300  => $0.026666...
-  // All the rest x100 = 5/USD   => $5 per 100  => $0.05 each
-  if (cat === "Drugs"){
-    const lower = name.toLowerCase();
-    if (lower.includes("cocaine")) return 10 / 500;
-    if (lower.includes("weed") || lower.includes("marijuana")) return 8 / 500;
-    if (lower.includes("fentanyl")) return 8 / 300;
-    return 5 / 100;
-  }
-
-  // WEAPONS:
-  // Pistols all 15 except heavy 20
-  if (cat === "Pistols"){
-    if (name.toLowerCase().includes("heavy")) return 20;
-    return 15;
-  }
-
-  // Melee all 2
-  if (cat === "Melee") return 2;
-
-  // SMGs all 20
-  if (cat === "SMGs") return 20;
-
-  // Shotguns all 25
-  if (cat === "Shotguns") return 25;
-
-  // Rifles all 30
-  if (cat === "Rifles") return 30;
-
-  // No pricing for other categories
-  return null;
-}
 
 function groupByCategory(items){
   const map = new Map();
@@ -146,28 +104,59 @@ function groupByCategory(items){
 }
 
 function computeStats(items){
+  // NOTE: no monetary totals anywhere
   const totalItems = sum(items.map(i => Number(i.quantity) || 0));
-
   const categories = new Set(items.map(i => (i.category || "Other").trim() || "Other")).size;
-
-  const totalValue = sum(items.map(i => {
-    const qty = Number(i.quantity) || 0;
-    const u = unitPriceFor(i);
-    if (!Number.isFinite(u)) return 0;
-    return qty * u;
-  }));
-
-  return { totalItems, categories, totalValue };
+  return { totalItems, categories };
 }
 
+// Price label rules (NO totals shown anywhere)
+function priceLabelFor(item){
+  const cat = (item.category || "").trim();
+  const name = (item.name || "").trim().toLowerCase();
+
+  // Drugs: display exactly as requested
+  if (cat === "Drugs"){
+    if (name.includes("weed") || name.includes("marijuana")) return "Weed x500 = 8$";
+    if (name.includes("fentanyl")) return "Fentanyl x300 = 8$";
+    if (name.includes("cocaine")) return "Cocaine x500 = 10$";
+    return "x100 = 5$";
+  }
+
+  // Pistols: show only ea (NO totals)
+  if (cat === "Pistols"){
+    if (name.includes("heavypistol") || name.includes("heavy pistol") || name.includes("heavy")) return "20 ea";
+    return "15 ea";
+  }
+
+  if (cat === "Melee") return "2 ea";
+  if (cat === "SMGs") return "20 ea";
+  if (cat === "Shotguns") return "25 ea";
+  if (cat === "Rifles") return "30 ea";
+
+  return "—";
+}
+
+function categoryDesc(cat){
+  const weaponCats = new Set(["Pistols", "SMGs", "Rifles", "Shotguns", "Melee"]);
+  return weaponCats.has(cat) ? WEAPON_DESC : "";
+}
+
+// ===============================
+// THEME TOGGLE
+// ===============================
 function applyThemeToggle(){
   const key = "gtaw_blackmarket_theme";
   const root = document.documentElement;
   const saved = localStorage.getItem(key);
+
   if (saved) root.setAttribute("data-theme", saved);
   if (!root.getAttribute("data-theme")) root.setAttribute("data-theme", "dark");
 
-  document.getElementById("themeToggle").addEventListener("click", () => {
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
     const cur = root.getAttribute("data-theme");
     const next = cur === "light" ? "dark" : "light";
     root.setAttribute("data-theme", next);
@@ -175,9 +164,13 @@ function applyThemeToggle(){
   });
 }
 
+// ===============================
+// DISCLAIMER MODAL (click image)
+// ===============================
 function bindDisclaimer(){
   const modal = document.getElementById("disclaimerModal");
   const open = document.getElementById("openDisclaimer");
+  if (!modal || !open) return;
 
   function openModal(){
     modal.classList.add("is-open");
@@ -188,9 +181,9 @@ function bindDisclaimer(){
     modal.setAttribute("aria-hidden", "true");
   }
 
-  open?.addEventListener("click", openModal);
+  open.addEventListener("click", openModal);
 
-  modal?.addEventListener("click", (e) => {
+  modal.addEventListener("click", (e) => {
     const t = e.target;
     if (t && t.getAttribute && t.getAttribute("data-close") === "true") closeModal();
   });
@@ -200,8 +193,13 @@ function bindDisclaimer(){
   });
 }
 
+// ===============================
+// UI: FILTERS + RENDER
+// ===============================
 function fillFilters(categories){
   const sel = document.getElementById("categoryFilter");
+  if (!sel) return;
+
   const cats = Array.from(categories).sort((a,b)=>a.localeCompare(b));
   for (const c of cats){
     const opt = document.createElement("option");
@@ -211,13 +209,9 @@ function fillFilters(categories){
   }
 }
 
-function categoryDesc(cat){
-  const weaponCats = new Set(["Pistols", "SMGs", "Rifles", "Shotguns", "Melee"]);
-  return weaponCats.has(cat) ? WEAPON_DESC : "";
-}
-
 function render(items){
   const grid = document.getElementById("categoryGrid");
+  if (!grid) return;
   grid.innerHTML = "";
 
   const grouped = groupByCategory(items);
@@ -226,21 +220,14 @@ function render(items){
   for (const cat of cats){
     const theme = CATEGORY_THEME[cat] || CATEGORY_THEME["Other"];
     const catItems = grouped.get(cat);
-
-    const catQty = sum(catItems.map(i => Number(i.quantity) || 0));
-    const catValue = sum(catItems.map(i => {
-      const qty = Number(i.quantity) || 0;
-      const u = unitPriceFor(i);
-      if (!Number.isFinite(u)) return 0;
-      return qty * u;
-    }));
-
     const desc = categoryDesc(cat);
 
     const card = document.createElement("article");
     card.className = "cat";
     card.style.setProperty("--accent", theme.accent);
 
+    // NOTE: no money totals in category header.
+    // Keeping only category title + optional description.
     card.innerHTML = `
       <div class="cat__bar"></div>
       <div class="cat__head">
@@ -251,19 +238,13 @@ function render(items){
           </h3>
           ${desc ? `<div class="cat__desc">${desc}</div>` : ``}
         </div>
-        <div class="cat__meta">
-          <div><b>${catQty.toLocaleString()}</b> total</div>
-          <div class="money">
-            <img class="money__icon" src="${MONEY_ICON}" alt="$" />
-            <b>${money(catValue)}</b>
-          </div>
-        </div>
       </div>
       <div class="cat__list"></div>
     `;
 
     const list = card.querySelector(".cat__list");
 
+    // Sort within category: qty desc then name
     const sorted = [...catItems].sort((a,b) => {
       const qa = Number(a.quantity)||0, qb = Number(b.quantity)||0;
       if (qb !== qa) return qb - qa;
@@ -272,8 +253,6 @@ function render(items){
 
     for (const it of sorted){
       const qty = Number(it.quantity) || 0;
-      const u = unitPriceFor(it);
-      const total = Number.isFinite(u) ? qty * u : null;
 
       const row = document.createElement("div");
       row.className = "item";
@@ -286,13 +265,7 @@ function render(items){
           <span class="badge">
             <span class="money">
               <img class="money__icon" src="${MONEY_ICON}" alt="$" />
-              <span>${Number.isFinite(u) ? `${money(u)} ea` : `—`}</span>
-            </span>
-          </span>
-          <span class="badge">
-            <span class="money">
-              <img class="money__icon" src="${MONEY_ICON}" alt="$" />
-              <span>${total !== null ? money(total) : `—`}</span>
+              <span>${priceLabelFor(it)}</span>
             </span>
           </span>
         </div>
@@ -306,13 +279,18 @@ function render(items){
 
 function hydrateKpis(allItems){
   const stats = computeStats(allItems);
-  document.getElementById("kpiTotalItems").textContent = stats.totalItems.toLocaleString();
-  document.getElementById("kpiCategories").textContent = stats.categories.toLocaleString();
-  document.getElementById("kpiTotalValue").textContent = money(stats.totalValue);
 
+  const totalEl = document.getElementById("kpiTotalItems");
+  const catsEl = document.getElementById("kpiCategories");
+
+  if (totalEl) totalEl.textContent = stats.totalItems.toLocaleString();
+  if (catsEl) catsEl.textContent = stats.categories.toLocaleString();
+
+  // Chips: top categories by quantity (counts only, no $)
   const chips = document.getElementById("quickStats");
-  chips.innerHTML = "";
+  if (!chips) return;
 
+  chips.innerHTML = "";
   const topCats = Array.from(groupByCategory(allItems).entries())
     .map(([cat, list]) => ({ cat, qty: sum(list.map(i => Number(i.quantity)||0)) }))
     .sort((a,b)=> b.qty - a.qty)
@@ -327,9 +305,9 @@ function hydrateKpis(allItems){
 }
 
 function getFilteredItems(){
-  const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  const cat = document.getElementById("categoryFilter").value;
-  const sort = document.getElementById("sortBy").value;
+  const q = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
+  const cat = document.getElementById("categoryFilter")?.value || "ALL";
+  const sort = document.getElementById("sortBy")?.value || "NAME_ASC";
 
   let items = [...INVENTORY].map(it => ({
     ...it,
@@ -350,12 +328,6 @@ function getFilteredItems(){
     items.sort((a,b)=>a.name.localeCompare(b.name));
   } else if (sort === "QTY_DESC"){
     items.sort((a,b)=>(Number(b.quantity)||0) - (Number(a.quantity)||0));
-  } else if (sort === "VALUE_DESC"){
-    items.sort((a,b)=>{
-      const av = (Number(a.quantity)||0) * (unitPriceFor(a) || 0);
-      const bv = (Number(b.quantity)||0) * (unitPriceFor(b) || 0);
-      return bv - av;
-    });
   }
 
   return items;
@@ -370,14 +342,19 @@ function bindUI(){
     hydrateKpis(INVENTORY);
   };
 
-  document.getElementById("searchInput").addEventListener("input", rerender);
-  document.getElementById("categoryFilter").addEventListener("change", rerender);
-  document.getElementById("sortBy").addEventListener("change", rerender);
+  document.getElementById("searchInput")?.addEventListener("input", rerender);
+  document.getElementById("categoryFilter")?.addEventListener("change", rerender);
+  document.getElementById("sortBy")?.addEventListener("change", rerender);
 
   rerender();
 }
 
-document.getElementById("year").textContent = new Date().getFullYear();
+// ===============================
+// INIT
+// ===============================
+const yearEl = document.getElementById("year");
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
 applyThemeToggle();
 bindDisclaimer();
 bindUI();
