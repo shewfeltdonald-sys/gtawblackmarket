@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>gtawisass — Inventory</title>
-  <meta name="description" content="Inventory dashboard." />
+  <meta name="description" content="GTA World RP inventory dashboard." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -27,9 +27,9 @@
     <section class="hero">
       <div class="hero__card">
         <div class="hero__left">
-          <h2>Your stash, organized</h2>
-          <p>
-            The website updates are live, and in-game items now reflect these changes. You may contact your provider or seller to double-check, but everything should be accurate. 
+          <h2>Inventory overview</h2>
+          <p class="muted">
+            The website updates are live, and in-game items now reflect these changes. You may contact your provider or seller to double-check, but everything should be accurate.
           </p>
           <div class="hero__chips" id="quickStats"></div>
         </div>
@@ -43,11 +43,6 @@
             <div class="kpi__label">Categories</div>
             <div class="kpi__value" id="kpiCategories">—</div>
           </div>
-          <div class="kpi">
-            <div class="kpi__label">Total Value</div>
-            <div class="kpi__value" id="kpiTotalValue">—</div>
-            <div class="kpi__hint">(optional — only if you add prices)</div>
-          </div>
         </div>
       </div>
     </section>
@@ -55,7 +50,7 @@
     <section class="toolbar">
       <div class="search">
         <span class="search__icon">🔎</span>
-        <input id="searchInput" class="search__input" placeholder="Search items… (e.g., pistol, medkit, weed)" />
+        <input id="searchInput" class="search__input" placeholder="Search items…" />
       </div>
 
       <select id="categoryFilter" class="select">
@@ -65,7 +60,6 @@
       <select id="sortBy" class="select">
         <option value="NAME_ASC">Sort: Name (A→Z)</option>
         <option value="QTY_DESC">Sort: Quantity (High→Low)</option>
-        <option value="VALUE_DESC">Sort: Value (High→Low)</option>
       </select>
     </section>
 
@@ -73,7 +67,7 @@
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <span>GTAW GUN INV • <span id="year"></span></span>
+        <span>GTA World RP • <span id="year"></span></span>
         <span class="muted">DO NOT SHARE WITH THE PUBLIC.</span>
       </div>
     </footer>
