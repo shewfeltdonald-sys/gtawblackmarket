@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GTAW Blackmarket</title>
   <meta name="description" content="Inventory dashboard." />
+
   <link rel="icon" type="image/png" href="./Pistols.png">
   <link rel="apple-touch-icon" href="./Pistols.png">
+
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
@@ -46,10 +48,10 @@
         <div class="hero__left">
           <h2>Inventory overview</h2>
           <p class="muted">
-            The inventory is updated live. No need to ask if it's "available" — if you see it here, it means it's available.
+            The inventory is updated live. If you see it here, it means it's available.
           </p>
 
-          <!-- Clickable disclaimer -->
+          <!-- Clickable disclaimer (smaller) -->
           <button id="openDisclaimer" class="disclaimerBtn" type="button" aria-label="Open disclaimer">
             <img src="./disclaimer.png" alt="Disclaimer" />
           </button>
@@ -83,7 +85,6 @@
       <select id="sortBy" class="select">
         <option value="NAME_ASC">Sort: Name (A→Z)</option>
         <option value="QTY_DESC">Sort: Quantity (High→Low)</option>
-        <option value="VALUE_DESC">Sort: Value (High→Low)</option>
       </select>
     </section>
 
