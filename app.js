@@ -11,7 +11,7 @@ const CATEGORY_THEME = {
   "Shotguns": { accent: "#f43f5e", image: "./Shotguns.png" },
   "Devices":  { accent: "#60a5fa", image: "./Devices.png" },
   "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
-  "Drugs":    { accent: "#fb7185", image: "./drugs.png" },
+  "Drugs":    { accent: "#fb7185", image: "./Drugs.png" },
   "Other":    { accent: "#94a3b8", image: "./Devices.png" }
 };
 
@@ -95,7 +95,7 @@ const INVENTORY = [
   { category: "Melee", name: "Flashlight", quantity: 3 },
 ];
 
-// Custom section order (exactly as requested)
+// Custom section order (page order)
 const CATEGORY_ORDER = [
   "Money",
   "Rifles",
@@ -107,6 +107,20 @@ const CATEGORY_ORDER = [
   "Drugs",
 ];
 
+// Chips order (what you asked for on the overview)
+const CHIP_ORDER = [
+  "Money",
+  "Rifles",
+  "Pistols",
+  "Melee",
+  "Devices",
+  "SMGs",
+  "Shotguns",
+];
+
+// ===============================
+// HELPERS
+// ===============================
 function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
 
 function groupByCategory(items){
@@ -119,11 +133,17 @@ function groupByCategory(items){
   return map;
 }
 
+function slugifyCategory(cat){
+  return String(cat)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9\-]/g, "");
+}
+
 function computeStats(items){
-  // No money totals anywhere
   const totalItems = sum(items.map(i => Number(i.quantity) || 0));
-  // Count includes the always-shown "Drugs" section even though it has 0 items
-  const categories = new Set([...CATEGORY_ORDER]).size;
+  const categories = new Set([...CATEGORY_ORDER]).size; // includes Drugs (out of stock)
   return { totalItems, categories };
 }
 
@@ -132,13 +152,13 @@ function priceLabelFor(item){
   const cat = (item.category || "").trim();
   const name = (item.name || "").trim().toLowerCase();
 
-  // Devices: no per-item prices (as requested)
+  // Devices: no per-item prices
   if (cat === "Devices") return null;
 
   // Money: no per-item price badge (pricing in description)
   if (cat === "Money") return null;
 
-  // Drugs removed / out of stock: no prices
+  // Drugs: out of stock, no prices
   if (cat === "Drugs") return null;
 
   // Pistols
@@ -162,7 +182,7 @@ function categoryDesc(cat){
   return "";
 }
 
-// Category header "tag" (only where requested)
+// Category header tag (only Devices requested)
 function categoryHeaderTag(cat){
   if (cat === "Devices"){
     return { icon: MONEY_ICON, text: "$10 per device" };
@@ -170,7 +190,9 @@ function categoryHeaderTag(cat){
   return null;
 }
 
-// Theme toggle
+// ===============================
+// THEME + DISCLAIMER
+// ===============================
 function applyThemeToggle(){
   const key = "gtaw_blackmarket_theme";
   const root = document.documentElement;
@@ -190,7 +212,6 @@ function applyThemeToggle(){
   });
 }
 
-// Disclaimer modal
 function bindDisclaimer(){
   const modal = document.getElementById("disclaimerModal");
   const open = document.getElementById("openDisclaimer");
@@ -217,11 +238,13 @@ function bindDisclaimer(){
   });
 }
 
+// ===============================
+// FILTERS
+// ===============================
 function fillFilters(){
   const sel = document.getElementById("categoryFilter");
   if (!sel) return;
 
-  // Clear existing (keep "ALL")
   sel.innerHTML = `<option value="ALL">All categories</option>`;
   for (const c of CATEGORY_ORDER){
     const opt = document.createElement("option");
@@ -231,6 +254,58 @@ function fillFilters(){
   }
 }
 
+// ===============================
+// QUICK CHIPS (CLICK -> SCROLL)
+// ===============================
+function getCategoryCountsMap(allItems){
+  const grouped = groupByCategory(allItems);
+  const counts = new Map();
+
+  for (const cat of CATEGORY_ORDER){
+    if (cat === "Drugs"){
+      counts.set(cat, 0);
+      continue;
+    }
+    const list = grouped.get(cat) || [];
+    const qty = sum(list.map(i => Number(i.quantity) || 0));
+    counts.set(cat, qty);
+  }
+
+  return counts;
+}
+
+function buildQuickChips(allItems){
+  const chips = document.getElementById("quickStats");
+  if (!chips) return;
+
+  chips.innerHTML = "";
+
+  const counts = getCategoryCountsMap(allItems);
+
+  for (const cat of CHIP_ORDER){
+    const theme = CATEGORY_THEME[cat] || CATEGORY_THEME["Other"];
+    const qty = counts.get(cat) ?? 0;
+    const targetId = `cat-${slugifyCategory(cat)}`;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.style.setProperty("--accent", theme.accent);
+    btn.setAttribute("data-target", targetId);
+    btn.innerHTML = `${cat}: <b>${qty.toLocaleString()}</b>`;
+
+    btn.addEventListener("click", () => {
+      const el = document.getElementById(targetId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    chips.appendChild(btn);
+  }
+}
+
+// ===============================
+// RENDER
+// ===============================
 function render(items){
   const grid = document.getElementById("categoryGrid");
   if (!grid) return;
@@ -247,6 +322,7 @@ function render(items){
     const card = document.createElement("article");
     card.className = "cat";
     card.style.setProperty("--accent", theme.accent);
+    card.id = `cat-${slugifyCategory(cat)}`;
 
     const drugsOutOfStock = (cat === "Drugs");
 
@@ -282,13 +358,13 @@ function render(items){
 
     const list = card.querySelector(".cat__list");
 
-    // Drugs: show nothing else (no items, no prices)
+    // Drugs: no items
     if (drugsOutOfStock){
       grid.appendChild(card);
       continue;
     }
 
-    // Sort within category: qty desc then name
+    // Sort: qty desc then name
     const sorted = [...catItems].sort((a,b) => {
       const qa = Number(a.quantity)||0, qb = Number(b.quantity)||0;
       if (qb !== qa) return qb - qa;
@@ -302,7 +378,7 @@ function render(items){
       const row = document.createElement("div");
       row.className = "item";
 
-      // Devices: no per-item prices, only quantity
+      // Devices: no per-item prices
       if (cat === "Devices"){
         row.innerHTML = `
           <div class="item__left">
@@ -316,7 +392,7 @@ function render(items){
         continue;
       }
 
-      // Money: show "144 millions available" style (quantity + label), no per-item prices
+      // Money: show "144 millions available"
       if (cat === "Money"){
         row.innerHTML = `
           <div class="item__left">
@@ -335,7 +411,7 @@ function render(items){
         continue;
       }
 
-      // Weapons: qty + price label only
+      // Weapons: qty + price label
       row.innerHTML = `
         <div class="item__left">
           <div class="item__name">${it.name}</div>
@@ -370,32 +446,12 @@ function hydrateKpis(allItems){
   if (totalEl) totalEl.textContent = stats.totalItems.toLocaleString();
   if (catsEl) catsEl.textContent = stats.categories.toLocaleString();
 
-  // Chips: top categories by quantity (counts only)
-  const chips = document.getElementById("quickStats");
-  if (!chips) return;
-
-  chips.innerHTML = "";
-
-  // Include only categories that have items (exclude Drugs since out of stock)
-  const grouped = groupByCategory(allItems);
-  const ranked = CATEGORY_ORDER
-    .filter(c => c !== "Drugs")
-    .map(cat => {
-      const list = grouped.get(cat) || [];
-      const qty = sum(list.map(i => Number(i.quantity) || 0));
-      return { cat, qty };
-    })
-    .sort((a,b)=> b.qty - a.qty)
-    .slice(0, 4);
-
-  for (const t of ranked){
-    const div = document.createElement("div");
-    div.className = "chip";
-    div.innerHTML = `${t.cat}: <b>${t.qty.toLocaleString()}</b>`;
-    chips.appendChild(div);
-  }
+  buildQuickChips(allItems);
 }
 
+// ===============================
+// SEARCH/FILTER/SORT
+// ===============================
 function getFilteredItems(){
   const q = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
   const cat = document.getElementById("categoryFilter")?.value || "ALL";
@@ -429,8 +485,9 @@ function bindUI(){
   fillFilters();
 
   const rerender = () => {
-    render(getFilteredItems());
-    hydrateKpis(INVENTORY);
+    const filtered = getFilteredItems();
+    render(filtered);
+    hydrateKpis(INVENTORY); // chips should reflect full inventory, not filtered
   };
 
   document.getElementById("searchInput")?.addEventListener("input", rerender);
