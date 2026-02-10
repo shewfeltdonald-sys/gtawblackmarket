@@ -1,26 +1,48 @@
+// ===============================
+// gtawisass — app.js (FULL FILE)
+// ===============================
+
 // Category images (in repo root — filenames must match EXACTLY)
 const CATEGORY_THEME = {
+  "Money":    { accent: "#34d399", image: "./dollar.png" },
+  "Rifles":   { accent: "#22c55e", image: "./Rifles.png" },
   "Pistols":  { accent: "#ef4444", image: "./Pistols.png" },
   "SMGs":     { accent: "#f59e0b", image: "./SMGs.png" },
-  "Rifles":   { accent: "#22c55e", image: "./Rifles.png" },
   "Shotguns": { accent: "#f43f5e", image: "./Shotguns.png" },
-  "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
-  "Drugs":    { accent: "#38bdf8", image: "./drugs.png" },
   "Devices":  { accent: "#60a5fa", image: "./Devices.png" },
+  "Melee":    { accent: "#a855f7", image: "./Melee weapons.png" },
+  "Drugs":    { accent: "#fb7185", image: "./Drugs.png" },
   "Other":    { accent: "#94a3b8", image: "./Devices.png" }
 };
 
-// Pricing icon (in repo root)
+// Dollar icon (in repo root)
 const MONEY_ICON = "./dollar.png";
 
-// Weapon category description
+// Updated weapon description (exactly as requested)
 const WEAPON_DESC =
-  "All weapons come with a minimum of 150 extra ammo included in the package. If 5+ weapons bought, it'll be 250 ammo. If 10+ 400 ammo etc.";
+  "All weapons come with a minimum of 150 included ammo. If 5+ weapons bought, it'll be 400 additional ammo for all 5. If 10+ 600 ammo included for all 10.";
+
+// Money description (exactly as requested)
+const MONEY_DESC =
+  "144 millions available — $100/million. If bought 3 millions and plus, $60/million. If 5 millions and plus, $40/million.";
 
 // ===============================
 // INVENTORY
+// NOTE: Drugs removed from items (out of stock display only)
 // ===============================
 const INVENTORY = [
+  // Money
+  { category: "Money", name: "Millions available", quantity: 144 },
+
+  // Rifles
+  { category: "Rifles", name: "CarbineRifleMk2", quantity: 15 },
+  { category: "Rifles", name: "AssaultRifle", quantity: 4 },
+  { category: "Rifles", name: "TacticalRifle", quantity: 2 },
+  { category: "Rifles", name: "CompactRifle", quantity: 4 },
+  { category: "Rifles", name: "SpecialCarbine", quantity: 1 },
+  { category: "Rifles", name: "StampedRifle", quantity: 1 },
+  { category: "Rifles", name: "HuntingRifle", quantity: 2 },
+
   // Pistols / Handguns
   { category: "Pistols", name: "HeavyPistol", quantity: 9 },
   { category: "Pistols", name: "CombatPistol", quantity: 10 },
@@ -49,20 +71,17 @@ const INVENTORY = [
   { category: "SMGs", name: "MAC10", quantity: 2 },
   { category: "SMGs", name: "MachinePistol", quantity: 1 },
 
-  // Rifles
-  { category: "Rifles", name: "CarbineRifleMk2", quantity: 15 },
-  { category: "Rifles", name: "AssaultRifle", quantity: 4 },
-  { category: "Rifles", name: "TacticalRifle", quantity: 2 },
-  { category: "Rifles", name: "CompactRifle", quantity: 4 },
-  { category: "Rifles", name: "SpecialCarbine", quantity: 1 },
-  { category: "Rifles", name: "StampedRifle", quantity: 1 },
-  { category: "Rifles", name: "HuntingRifle", quantity: 2 },
-
   // Shotguns
   { category: "Shotguns", name: "PumpShotgun", quantity: 5 },
   { category: "Shotguns", name: "SawnOffShotgun", quantity: 5 },
   { category: "Shotguns", name: "DbShotgun", quantity: 1 },
   { category: "Shotguns", name: "Remington", quantity: 1 },
+
+  // Devices
+  { category: "Devices", name: "Device scanner", quantity: 55 },
+  { category: "Devices", name: "Wires", quantity: 25 },
+  { category: "Devices", name: "Bugs", quantity: 29 },
+  { category: "Devices", name: "Vehicle trackers", quantity: 11 },
 
   // Melee Weapons
   { category: "Melee", name: "Knife", quantity: 9 },
@@ -74,23 +93,20 @@ const INVENTORY = [
   { category: "Melee", name: "BattleAxe", quantity: 2 },
   { category: "Melee", name: "KnuckleDuster", quantity: 8 },
   { category: "Melee", name: "Flashlight", quantity: 3 },
-
-  // Drugs
-  { category: "Drugs", name: "Marijuana / Weed", quantity: 3800 },
-  { category: "Drugs", name: "Cocaine", quantity: 4600 },
-  { category: "Drugs", name: "Fentanyl", quantity: 1100 },
-  { category: "Drugs", name: "PCP", quantity: 1100 },
-  { category: "Drugs", name: "Methamphetamine", quantity: 460 },
-  { category: "Drugs", name: "Heroin", quantity: 250 },
-  { category: "Drugs", name: "LSD", quantity: 146 },
-  { category: "Drugs", name: "Bath Salts", quantity: 28 },
-  { category: "Drugs", name: "Oxycodone", quantity: 250 },
-  { category: "Drugs", name: "Morphine", quantity: 250 },
 ];
 
-// ===============================
-// HELPERS
-// ===============================
+// Custom section order (exactly as requested)
+const CATEGORY_ORDER = [
+  "Money",
+  "Rifles",
+  "Pistols",
+  "SMGs",
+  "Shotguns",
+  "Devices",
+  "Melee",
+  "Drugs",
+];
+
 function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
 
 function groupByCategory(items){
@@ -104,28 +120,30 @@ function groupByCategory(items){
 }
 
 function computeStats(items){
-  // NOTE: no monetary totals anywhere
+  // No money totals anywhere
   const totalItems = sum(items.map(i => Number(i.quantity) || 0));
-  const categories = new Set(items.map(i => (i.category || "Other").trim() || "Other")).size;
+  // Count includes the always-shown "Drugs" section even though it has 0 items
+  const categories = new Set([...CATEGORY_ORDER]).size;
   return { totalItems, categories };
 }
 
-// Price label rules (NO totals shown anywhere)
+// Price label rules (NO totals anywhere)
 function priceLabelFor(item){
   const cat = (item.category || "").trim();
   const name = (item.name || "").trim().toLowerCase();
 
-  // Drugs: display exactly as requested
-  if (cat === "Drugs"){
-    if (name.includes("weed") || name.includes("marijuana")) return "Weed x500 = 8$";
-    if (name.includes("fentanyl")) return "Fentanyl x300 = 8$";
-    if (name.includes("cocaine")) return "Cocaine x500 = 10$";
-    return "x100 = 5$";
-  }
+  // Devices: no per-item prices (as requested)
+  if (cat === "Devices") return null;
 
-  // Pistols: show only ea (NO totals)
+  // Money: no per-item price badge (pricing in description)
+  if (cat === "Money") return null;
+
+  // Drugs removed / out of stock: no prices
+  if (cat === "Drugs") return null;
+
+  // Pistols
   if (cat === "Pistols"){
-    if (name.includes("heavypistol") || name.includes("heavy pistol") || name.includes("heavy")) return "20 ea";
+    if (name.includes("heavy")) return "20 ea";
     return "15 ea";
   }
 
@@ -134,17 +152,25 @@ function priceLabelFor(item){
   if (cat === "Shotguns") return "25 ea";
   if (cat === "Rifles") return "30 ea";
 
-  return "—";
+  return null;
 }
 
 function categoryDesc(cat){
+  if (cat === "Money") return MONEY_DESC;
   const weaponCats = new Set(["Pistols", "SMGs", "Rifles", "Shotguns", "Melee"]);
-  return weaponCats.has(cat) ? WEAPON_DESC : "";
+  if (weaponCats.has(cat)) return WEAPON_DESC;
+  return "";
 }
 
-// ===============================
-// THEME TOGGLE
-// ===============================
+// Category header "tag" (only where requested)
+function categoryHeaderTag(cat){
+  if (cat === "Devices"){
+    return { icon: MONEY_ICON, text: "$10 per device" };
+  }
+  return null;
+}
+
+// Theme toggle
 function applyThemeToggle(){
   const key = "gtaw_blackmarket_theme";
   const root = document.documentElement;
@@ -164,9 +190,7 @@ function applyThemeToggle(){
   });
 }
 
-// ===============================
-// DISCLAIMER MODAL (click image)
-// ===============================
+// Disclaimer modal
 function bindDisclaimer(){
   const modal = document.getElementById("disclaimerModal");
   const open = document.getElementById("openDisclaimer");
@@ -193,15 +217,13 @@ function bindDisclaimer(){
   });
 }
 
-// ===============================
-// UI: FILTERS + RENDER
-// ===============================
-function fillFilters(categories){
+function fillFilters(){
   const sel = document.getElementById("categoryFilter");
   if (!sel) return;
 
-  const cats = Array.from(categories).sort((a,b)=>a.localeCompare(b));
-  for (const c of cats){
+  // Clear existing (keep "ALL")
+  sel.innerHTML = `<option value="ALL">All categories</option>`;
+  for (const c of CATEGORY_ORDER){
     const opt = document.createElement("option");
     opt.value = c;
     opt.textContent = c;
@@ -215,19 +237,19 @@ function render(items){
   grid.innerHTML = "";
 
   const grouped = groupByCategory(items);
-  const cats = Array.from(grouped.keys()).sort((a,b)=>a.localeCompare(b));
 
-  for (const cat of cats){
+  for (const cat of CATEGORY_ORDER){
     const theme = CATEGORY_THEME[cat] || CATEGORY_THEME["Other"];
-    const catItems = grouped.get(cat);
+    const catItems = grouped.get(cat) || [];
     const desc = categoryDesc(cat);
+    const headerTag = categoryHeaderTag(cat);
 
     const card = document.createElement("article");
     card.className = "cat";
     card.style.setProperty("--accent", theme.accent);
 
-    // NOTE: no money totals in category header.
-    // Keeping only category title + optional description.
+    const drugsOutOfStock = (cat === "Drugs");
+
     card.innerHTML = `
       <div class="cat__bar"></div>
       <div class="cat__head">
@@ -236,13 +258,35 @@ function render(items){
             <img class="cat__icon" src="${theme.image}" alt="${cat}" />
             <span>${cat}</span>
           </h3>
-          ${desc ? `<div class="cat__desc">${desc}</div>` : ``}
+          ${
+            drugsOutOfStock
+              ? `<div class="cat__desc"><span class="badge badge--danger">OUT OF STOCK</span></div>`
+              : (desc ? `<div class="cat__desc">${desc}</div>` : ``)
+          }
+        </div>
+        <div class="cat__meta">
+          ${
+            headerTag
+              ? `<span class="badge">
+                   <span class="money">
+                     <img class="money__icon" src="${headerTag.icon}" alt="$" />
+                     <span>${headerTag.text}</span>
+                   </span>
+                 </span>`
+              : ``
+          }
         </div>
       </div>
       <div class="cat__list"></div>
     `;
 
     const list = card.querySelector(".cat__list");
+
+    // Drugs: show nothing else (no items, no prices)
+    if (drugsOutOfStock){
+      grid.appendChild(card);
+      continue;
+    }
 
     // Sort within category: qty desc then name
     const sorted = [...catItems].sort((a,b) => {
@@ -253,21 +297,61 @@ function render(items){
 
     for (const it of sorted){
       const qty = Number(it.quantity) || 0;
+      const priceLabel = priceLabelFor(it);
 
       const row = document.createElement("div");
       row.className = "item";
+
+      // Devices: no per-item prices, only quantity
+      if (cat === "Devices"){
+        row.innerHTML = `
+          <div class="item__left">
+            <div class="item__name">${it.name}</div>
+          </div>
+          <div class="item__right">
+            <span class="badge">x ${qty.toLocaleString()}</span>
+          </div>
+        `;
+        list.appendChild(row);
+        continue;
+      }
+
+      // Money: show "144 millions available" style (quantity + label), no per-item prices
+      if (cat === "Money"){
+        row.innerHTML = `
+          <div class="item__left">
+            <div class="item__name">${qty.toLocaleString()} millions available</div>
+          </div>
+          <div class="item__right">
+            <span class="badge">
+              <span class="money">
+                <img class="money__icon" src="${MONEY_ICON}" alt="$" />
+                <span>$100/million</span>
+              </span>
+            </span>
+          </div>
+        `;
+        list.appendChild(row);
+        continue;
+      }
+
+      // Weapons: qty + price label only
       row.innerHTML = `
         <div class="item__left">
           <div class="item__name">${it.name}</div>
         </div>
         <div class="item__right">
           <span class="badge">x ${qty.toLocaleString()}</span>
-          <span class="badge">
-            <span class="money">
-              <img class="money__icon" src="${MONEY_ICON}" alt="$" />
-              <span>${priceLabelFor(it)}</span>
-            </span>
-          </span>
+          ${
+            priceLabel
+              ? `<span class="badge">
+                   <span class="money">
+                     <img class="money__icon" src="${MONEY_ICON}" alt="$" />
+                     <span>${priceLabel}</span>
+                   </span>
+                 </span>`
+              : ``
+          }
         </div>
       `;
       list.appendChild(row);
@@ -286,17 +370,25 @@ function hydrateKpis(allItems){
   if (totalEl) totalEl.textContent = stats.totalItems.toLocaleString();
   if (catsEl) catsEl.textContent = stats.categories.toLocaleString();
 
-  // Chips: top categories by quantity (counts only, no $)
+  // Chips: top categories by quantity (counts only)
   const chips = document.getElementById("quickStats");
   if (!chips) return;
 
   chips.innerHTML = "";
-  const topCats = Array.from(groupByCategory(allItems).entries())
-    .map(([cat, list]) => ({ cat, qty: sum(list.map(i => Number(i.quantity)||0)) }))
+
+  // Include only categories that have items (exclude Drugs since out of stock)
+  const grouped = groupByCategory(allItems);
+  const ranked = CATEGORY_ORDER
+    .filter(c => c !== "Drugs")
+    .map(cat => {
+      const list = grouped.get(cat) || [];
+      const qty = sum(list.map(i => Number(i.quantity) || 0));
+      return { cat, qty };
+    })
     .sort((a,b)=> b.qty - a.qty)
     .slice(0, 4);
 
-  for (const t of topCats){
+  for (const t of ranked){
     const div = document.createElement("div");
     div.className = "chip";
     div.innerHTML = `${t.cat}: <b>${t.qty.toLocaleString()}</b>`;
@@ -334,8 +426,7 @@ function getFilteredItems(){
 }
 
 function bindUI(){
-  const cats = new Set(INVENTORY.map(i => i.category?.trim() || "Other"));
-  fillFilters(cats);
+  fillFilters();
 
   const rerender = () => {
     render(getFilteredItems());
@@ -349,9 +440,7 @@ function bindUI(){
   rerender();
 }
 
-// ===============================
-// INIT
-// ===============================
+// Init
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
