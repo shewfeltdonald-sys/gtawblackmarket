@@ -95,17 +95,33 @@ body{
   display: block;
 }
 
+/* CLICKABLE CHIPS */
 .hero__chips{ margin-top: 12px; display:flex; flex-wrap: wrap; gap: 10px; }
+
 .chip{
-  border: 1px solid var(--border);
-  background: var(--card);
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  color: var(--text);
   border-radius: 999px;
-  padding: 8px 10px;
-  display:flex;
+  padding: 9px 12px;
+  display:inline-flex;
   gap: 8px;
   align-items:center;
+  cursor: pointer;
+  font-weight: 650;
+  box-shadow: 0 10px 22px rgba(0,0,0,.18);
+  transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
 }
-.chip b{ font-variant-numeric: tabular-nums; }
+.chip b{ font-variant-numeric: tabular-nums; font-weight: 800; }
+
+.chip:hover{
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 75%, var(--border));
+  background: color-mix(in srgb, var(--accent) 24%, var(--card2));
+  box-shadow: 0 14px 28px rgba(0,0,0,.24);
+}
+.chip:active{ transform: translateY(0px); }
 
 .hero__right{ display:grid; gap: 10px; }
 .kpi{
@@ -163,6 +179,7 @@ body{
   box-shadow: var(--shadow);
   overflow:hidden;
   position: relative;
+  scroll-margin-top: 90px; /* helps scrolling land nicely under sticky header */
 }
 .cat__bar{ height: 8px; background: var(--accent); }
 
